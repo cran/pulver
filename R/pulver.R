@@ -14,7 +14,7 @@
 #' For reasons of computational efficiency, \code{pulverize} returns
 #' only p-values and only for the interaction term \eqn{xz}.
 #' Fast run time is achieved by using the correlation coefficient between
-#' the outcome variable eqn{y} and the interaction term eqn{xz} to test
+#' the outcome variable \eqn{y} and the interaction term \eqn{xz} to test
 #' the null-hypothesis, which avoids the costly computation of inversions.
 #' Additional employed time-saving operations are a rearrangement of the order when iterating through
 #' the different matrices, and implementing the core algorithm in the fast
@@ -46,7 +46,7 @@
 #' @details Matrices \code{ymat}, \code{xmat}, and \code{zmat} must
 #'     have column names. Missing values are imputed using their
 #'     column means. If \code{pvalue_threshold} is supplied, only
-#'     p-values (p < \code{pvalue_threshold})strictly below the
+#'     p-values (p < \code{pvalue_threshold}) strictly below the
 #'     threshold are included in the returned data frame and saved
 #'     in \code{output_file}.
 #'
@@ -56,7 +56,7 @@
 #'     \code{suppress_return} to \code{TRUE}.
 #'
 #'     The column names of the results table are by default set to "y", "x", and
-#'     "z", but can be changed using the \code{names} argument.
+#'     "z", but can be changed using the \code{colnames} argument.
 #'
 #'     An error will be signaled if \code{output_file} already exists.
 #'     Setting \code{overwrite} to \code{TRUE} will silently overwrite the
@@ -95,6 +95,7 @@ pulverize <- function(ymat, xmat, zmat, output_file = NULL,
         stop("File exists already: ", output_file)
     if (any(c(is.null(colnames(ymat)), is.null(colnames(xmat)), is.null(colnames(zmat)))))
         stop("Column names for at least one matrix is missing.")
+    check_identical_rownames(ymat, xmat, zmat)
     number_of_individuals <- nrow(xmat)
     if (is.null(pvalue_threshold))
         rvalue_threshold <- Inf
@@ -259,7 +260,7 @@ read_data <- function(file) {
 
 #' Reads a \code{databel} object file in table format and returns a matrix of type "double"
 #'
-#' @param file file name of a \code{databel} object (extension: ".fvi") or text file
+#' @param file file name of a \code{databel} object (no extension, i.e. "example" instead of  "example.fvi")
 #'
 #' @return matrix of type "double"
 #'
@@ -276,7 +277,7 @@ read_databel <- function(file) {
 #' Converts matrix of type "double" to a \code{databel} object file
 #'
 #' @param data matrix of type "double"
-#' @param file file name of a \code{databel} object (extension: ".fvi") or text file
+#' @param file file name of a \code{databel} object or text file
 #'
 #' @references \url{www.genabel.org/packages/DatABEL}
 #'
@@ -300,4 +301,18 @@ replace_NA_by_mean <- function(data) {
     indx <- which(is.na(data), arr.ind=TRUE)
     data[indx] <- datacM[indx[,2]]
     data
+}
+
+check_identical_rownames <- function(ymat, xmat, zmat) {
+    nullmatrices <- c(is.null(rownames(ymat)), is.null(rownames(xmat)), is.null(rownames(zmat)))
+    if (any(nullmatrices)) {
+        if (length(which(nullmatrices)) == 1) {
+            warning(paste0("Matrix ", c("ymat", "xmat", "zmat")[nullmatrices], " does not have row names."))
+        } else {
+            warning(paste0("Matrices ", paste(c("ymat", "xmat", "zmat")[nullmatrices], collapse = ", ")," do not have row names."))
+        }
+    } else {
+        if (any(rownames(ymat) != rownames(xmat) | rownames(xmat) != rownames(zmat)))
+            stop("Matrices do not have identical row names.")
+    }
 }

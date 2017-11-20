@@ -206,28 +206,6 @@ hr {
 <body>
 <p><strong><em>Installation</em></strong></p>
 
-<p><strong>Development version (Github)</strong></p>
-
-<pre><code class="r">library(devtools)
-install_github(&quot;smolnos/pulver&quot;)
-</code></pre>
-
-<pre><code>## Downloading GitHub repo smolnos/pulver@master
-## from URL https://api.github.com/repos/smolnos/pulver/zipball/master
-</code></pre>
-
-<pre><code>## Installing pulver
-</code></pre>
-
-<pre><code>## &#39;/usr/lib64/R/bin/R&#39; --no-site-file --no-environ --no-save --no-restore  \
-##   --quiet CMD INSTALL  \
-##   &#39;/tmp/RtmpHmTEcB/devtools4b724e935b48/smolnos-pulver-e29e0f6&#39;  \
-##   --library=&#39;/tmp/Rtmpzjxlni/Rinst4b4c1c184d85&#39; --install-tests
-</code></pre>
-
-<pre><code>## 
-</code></pre>
-
 <p><strong>Function <code>pulverize</code></strong></p>
 
 <p><code>pulverize</code> receives three arguments: the output matrix Y, and two input matrices X and Z. Then, <code>pulverize</code> iterates through each column y of matrix Y, each column x of matrix X, and each column z of matrix Z in order to evaluate the linear regression:
@@ -307,14 +285,14 @@ system.time(pulverize(Y, X, Z))
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   2.192   0.030   2.222
+##   2.089   0.030   2.127
 </code></pre>
 
 <pre><code class="r">system.time(pulverize(Y, X, Z, cores = 2))
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   2.105   0.026   1.199
+##   1.945   0.022   1.972
 </code></pre>
 
 <p><strong>Running function <code>pulverize_all</code></strong></p>
@@ -326,7 +304,7 @@ The files contain submatrices of the matrices Y, X, and Z. <code>pulverize_all</
 <p>Thus, first we create lists containing file names of larger matrices Y and X, and one list containing the matrix Z.</p>
 
 <pre><code class="r">nobs &lt;- 100
-Y &lt;- matrix(rnorm(nobs * 20), ncol = 20, dimnames = list(NULL,
+Y &lt;- matrix(rnorm(nobs * 20), ncol = 20, dimnames = list(paste0(&quot;row&quot;, 1:nobs),
 paste0(&quot;column&quot;, 1:20)))
 Y1 &lt;- Y[,1:10]
 Y2 &lt;- Y[,11:20]

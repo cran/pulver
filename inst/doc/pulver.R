@@ -1,10 +1,6 @@
 ## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
-## ----Github, results = "hide"--------------------------------------------
-library(devtools)
-install_github("smolnos/pulver")
-
 ## ----create_matrices-----------------------------------------------------
 set.seed(369)
 nobs <- 100
@@ -35,7 +31,7 @@ system.time(pulverize(Y, X, Z, cores = 2))
 
 ## ----create_lists--------------------------------------------------------
 nobs <- 100
-Y <- matrix(rnorm(nobs * 20), ncol = 20, dimnames = list(NULL,
+Y <- matrix(rnorm(nobs * 20), ncol = 20, dimnames = list(paste0("row", 1:nobs),
 paste0("column", 1:20)))
 Y1 <- Y[,1:10]
 Y2 <- Y[,11:20]
